@@ -185,7 +185,8 @@ import { isGithubHosted, isTLSEnabled } from "./tls-inspect";
       );
 
       const responseBody: string = await resp.readBody();
-      console.log(`Monitor API response: ${responseBody}`); // Log the response body
+      console.log(`Monitor API response: ${responseBody}`);
+      console.log(`Monitor API response status: ${statusCode}`);
     } catch (e) {
       console.log(`error in connecting to ${api_url}: ${e}`);
     }
