@@ -71780,6 +71780,8 @@ var setup_awaiter = (undefined && undefined.__awaiter) || function (thisArg, _ar
             external_fs_.appendFileSync(process.env.GITHUB_STATE, `monitorStatusCode=${statusCode}${external_os_.EOL}`, {
                 encoding: "utf8",
             });
+            const responseBody = yield resp.readBody();
+            console.log(`Monitor API response: ${responseBody}`); // Log the response body
         }
         catch (e) {
             console.log(`error in connecting to ${api_url}: ${e}`);

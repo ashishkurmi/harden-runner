@@ -183,6 +183,9 @@ import { isGithubHosted, isTLSEnabled } from "./tls-inspect";
           encoding: "utf8",
         }
       );
+
+      const responseBody: string = await resp.readBody();
+      console.log(`Monitor API response: ${responseBody}`); // Log the response body
     } catch (e) {
       console.log(`error in connecting to ${api_url}: ${e}`);
     }
