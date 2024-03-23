@@ -186,10 +186,6 @@ interface MonitorResponse {
         `${api_url}/github/${process.env["GITHUB_REPOSITORY"]}/actions/runs/${process.env["GITHUB_RUN_ID"]}/monitor`,
         monitorRequestData
       );
-
-      // Log the entire response body and status code
-      console.log(`Response Status Code: ${resp.statusCode}`);
-      console.log(`Response Body: ${JSON.stringify(resp.result)}`);
       
       const responseData = resp.result;
       statusCode = resp.statusCode; // adding error code to check whether agent is getting installed or not.
