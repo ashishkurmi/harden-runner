@@ -47,7 +47,7 @@ export const processLogLine = (
 };
 
 export async function addSummary() {
-  if (process.env.STATE_monitorStatusCode !== "200") {
+  if (process.env.STATE_addSummary !== "true") {
     return;
   }
 
