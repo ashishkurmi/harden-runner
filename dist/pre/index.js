@@ -71282,7 +71282,7 @@ const processLogLine = (line, tableEntries) => {
 };
 function addSummary() {
     return __awaiter(this, void 0, void 0, function* () {
-        if (process.env.STATE_monitorStatusCode !== "200") {
+        if (process.env.STATE_addSummary !== "true") {
             return;
         }
         const web_url = "https://app.stepsecurity.io";
@@ -71774,19 +71774,32 @@ var setup_awaiter = (undefined && undefined.__awaiter) || function (thisArg, _ar
         let _http = new lib.HttpClient();
         let statusCode;
         _http.requestOptions = { socketTimeout: 3 * 1000 };
+        let addSummary = "false";
         try {
-            const resp = yield _http.get(`${api_url}/github/${process.env["GITHUB_REPOSITORY"]}/actions/runs/${process.env["GITHUB_RUN_ID"]}/monitor`);
-            statusCode = resp.message.statusCode; // adding error code to check whether agent is getting installed or not.
+            const monitorRequestData = {
+                correlation_id: correlation_id,
+                job: process.env["GITHUB_JOB"],
+            };
+            const resp = yield _http.postJson(`${api_url}/github/${process.env["GITHUB_REPOSITORY"]}/actions/runs/${process.env["GITHUB_RUN_ID"]}/monitor`, monitorRequestData);
+            // Log the entire response body and status code
+            console.log(`Response Status Code: ${resp.statusCode}`);
+            console.log(`Response Body: ${JSON.stringify(resp.result)}`);
+            const responseData = resp.result;
+            statusCode = resp.statusCode; // adding error code to check whether agent is getting installed or not.
             external_fs_.appendFileSync(process.env.GITHUB_STATE, `monitorStatusCode=${statusCode}${external_os_.EOL}`, {
                 encoding: "utf8",
             });
-            const responseBody = yield resp.readBody();
-            console.log(`Monitor API response: ${responseBody}`);
-            console.log(`Monitor API response status: ${statusCode}`);
+            if (statusCode === 200 && responseData) {
+                console.log(`Runner IP Address: ${responseData.runner_ip_address}`);
+                addSummary = responseData.monitoring_started ? "true" : "false";
+            }
         }
         catch (e) {
             console.log(`error in connecting to ${api_url}: ${e}`);
         }
+        external_fs_.appendFileSync(process.env.GITHUB_STATE, `addSummary=${addSummary}${external_os_.EOL}`, {
+            encoding: "utf8",
+        });
         console.log(`Step Security Job Correlation ID: ${correlation_id}`);
         if (String(statusCode) === STATUS_HARDEN_RUNNER_UNAVAILABLE) {
             console.log(HARDEN_RUNNER_UNAVAILABLE_MESSAGE);

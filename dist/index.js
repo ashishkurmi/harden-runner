@@ -2872,7 +2872,7 @@ const processLogLine = (line, tableEntries) => {
 };
 function addSummary() {
     return __awaiter(this, void 0, void 0, function* () {
-        if (process.env.STATE_monitorStatusCode !== "200") {
+        if (process.env.STATE_addSummary !== "true") {
             return;
         }
         const web_url = "https://app.stepsecurity.io";
