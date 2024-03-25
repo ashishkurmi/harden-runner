@@ -47,9 +47,6 @@ export const processLogLine = (
 };
 
 export async function addSummary() {
-  console.log("addSummary called");
-  
-  console.log(`Value of process.env.STATE_addSummary: ${process.env.STATE_addSummary}`);
   if (process.env.STATE_addSummary !== "true") {
     return;
   }
