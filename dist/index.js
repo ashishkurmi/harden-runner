@@ -2872,8 +2872,6 @@ const processLogLine = (line, tableEntries) => {
 };
 function addSummary() {
     return __awaiter(this, void 0, void 0, function* () {
-        console.log("addSummary called");
-        console.log(`Value of process.env.STATE_addSummary: ${process.env.STATE_addSummary}`);
         if (process.env.STATE_addSummary !== "true") {
             return;
         }
