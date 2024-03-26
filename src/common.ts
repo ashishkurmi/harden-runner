@@ -1,5 +1,6 @@
 import * as core from "@actions/core";
 import * as fs from "fs";
+import { STEPSECURITY_WEB_URL } from "./configs";
 
 export function printInfo(web_url) {
   console.log(
@@ -51,7 +52,7 @@ export async function addSummary() {
     return;
   }
 
-  const web_url = "https://app.stepsecurity.io";
+  const web_url = STEPSECURITY_WEB_URL;
   const insights_url = `${web_url}/github/${process.env["GITHUB_REPOSITORY"]}/actions/runs/${process.env["GITHUB_RUN_ID"]}`;
 
   const log = "/home/agent/agent.log";
