@@ -71246,6 +71246,11 @@ const validate = dist.validate;
 const stringify = dist.stringify;
 const parse = dist.parse;
 
+;// CONCATENATED MODULE: ./src/configs.ts
+const STEPSECURITY_ENV = "int"; //"agent"; // agent or int
+const STEPSECURITY_API_URL = `https://${STEPSECURITY_ENV}.api.stepsecurity.io/v1`;
+const configs_STEPSECURITY_WEB_URL = "https://int1.stepsecurity.io";
+
 ;// CONCATENATED MODULE: ./src/common.ts
 var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -71256,6 +71261,7 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+
 
 
 function printInfo(web_url) {
@@ -71285,7 +71291,7 @@ function addSummary() {
         if (process.env.STATE_addSummary !== "true") {
             return;
         }
-        const web_url = "https://app.stepsecurity.io";
+        const web_url = STEPSECURITY_WEB_URL;
         const insights_url = `${web_url}/github/${process.env["GITHUB_REPOSITORY"]}/actions/runs/${process.env["GITHUB_RUN_ID"]}`;
         const log = "/home/agent/agent.log";
         if (!fs.existsSync(log)) {
@@ -71456,11 +71462,6 @@ const RefKey = "GITHUB_REF";
 function isValidEvent() {
     return RefKey in process.env && Boolean(process.env[RefKey]);
 }
-
-;// CONCATENATED MODULE: ./src/configs.ts
-const STEPSECURITY_ENV = "int"; //"agent"; // agent or int
-const STEPSECURITY_API_URL = `https://${STEPSECURITY_ENV}.api.stepsecurity.io/v1`;
-const STEPSECURITY_WEB_URL = "https://int1.stepsecurity.io";
 
 ;// CONCATENATED MODULE: ./src/policy-utils.ts
 var policy_utils_awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
@@ -71666,7 +71667,7 @@ var setup_awaiter = (undefined && undefined.__awaiter) || function (thisArg, _ar
         }
         var correlation_id = v4();
         var api_url = STEPSECURITY_API_URL;
-        var web_url = STEPSECURITY_WEB_URL;
+        var web_url = configs_STEPSECURITY_WEB_URL;
         let confg = {
             repo: process.env["GITHUB_REPOSITORY"],
             run_id: process.env["GITHUB_RUN_ID"],
