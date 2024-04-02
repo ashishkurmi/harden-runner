@@ -15,7 +15,7 @@ jobs:
       contents: write
       pull-requests: write
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           ref: ${{ github.event.inputs.branch }}
       - name: Setup Node.js
@@ -26,13 +26,15 @@ jobs:
         run: npm install
       - name: Run build
         run: npm run build
+        env:
+          NODE_OPTIONS: --openssl-legacy-provider
       - name: Check for changes
         id: git-check
         run: |
           git diff --quiet || echo "::set-output name=changed::true"
       - name: Create Pull Request
         if: steps.git-check.outputs.changed == 'true'
-        uses: peter-evans/create-pull-request@v4
+        uses: peter-evans/create-pull-request@v6
         with:
           commit-message: "Update dist files"
           branch: update-dist-${{ github.run_number }}
