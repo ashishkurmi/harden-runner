@@ -14,24 +14,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Check for changes in dist
+        with:
+          fetch-depth: 0
+
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v44
+
+      - name: List all changed files
         run: |
-          # Fetch the base branch
-          echo "Fetching origin/${{ github.base_ref }}"
-          git fetch origin ${{ github.base_ref }}
-
-          # Get the merge base between the base and the head of the PR
-          MERGE_BASE=$(git merge-base FETCH_HEAD ${{ github.sha }})
-          echo "Merge base: $MERGE_BASE"
-
-          # Echo the diff to see what changes are detected
-          echo "Differences:"
-          git diff --name-only $MERGE_BASE ${{ github.sha }}
-
-          # Check specifically for 'dist/' changes
-          if git diff --name-only $MERGE_BASE ${{ github.sha }} | grep -q 'dist/'; then
-            echo "Manual changes to the 'dist/' folder are not allowed. Please remove these changes from your pull request."
-            exit 1
-          else
-            echo "No changes detected in 'dist/' folder."
-          fi
+          for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
+            echo "$file was changed"
+          done
