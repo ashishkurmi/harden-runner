@@ -21,8 +21,23 @@ jobs:
         id: changed-files
         uses: tj-actions/changed-files@v44
 
-      - name: List all changed files
+      - name: Verify all or none of the files are under dist
         run: |
-          for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
+          ALL_UNDER_DIST=true
+          NONE_UNDER_DIST=true
+          IFS=' ' read -r -a CHANGED_FILES <<< "${{ steps.changed-files.outputs.all_changed_files }}"
+          for file in "${CHANGED_FILES[@]}"; do
             echo "$file was changed"
+            if [[ "$file" == dist/* ]]; then
+              NONE_UNDER_DIST=false
+            else
+              ALL_UNDER_DIST=false
+            fi
           done
+
+          if [ "$ALL_UNDER_DIST" = true ] || [ "$NONE_UNDER_DIST" = true ]; then
+            echo "Check passed: All or none of the files are under the 'dist/' folder."
+          else
+            echo "Check failed: Some files are under the 'dist/' folder and some are not. This is not allowed."
+            exit 1
+          fi
