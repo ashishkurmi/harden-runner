@@ -16,7 +16,11 @@ jobs:
       - uses: actions/checkout@v4
       - name: Check for changes in dist
         run: |
-          if git diff --name-only ${{ github.event.pull_request.base.sha }}...${{ github.head_ref }} | grep -q 'dist/'; then
+          # Fetch the base branch
+          git fetch origin ${{ github.base_ref }}
+          # Get the merge base between the base and the head of the PR
+          MERGE_BASE=$(git merge-base FETCH_HEAD ${{ github.sha }})
+          if git diff --name-only $MERGE_BASE ${{ github.sha }} | grep -q 'dist/'; then
             echo "Manual changes to the 'dist/' folder are not allowed. Please remove these changes from your pull request."
             exit 1
           fi
