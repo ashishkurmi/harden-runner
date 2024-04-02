@@ -1,0 +1,45 @@
+name: Build and Create PR for dist
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: "Branch to run build and commit dist"
+        required: true
+        default: "main"
+
+jobs:
+  build-and-commit:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.branch }}
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install dependencies
+        run: npm install
+      - name: Run build
+        run: npm run build
+      - name: Check for changes
+        id: git-check
+        run: |
+          git diff --quiet || echo "::set-output name=changed::true"
+      - name: Create Pull Request
+        if: steps.git-check.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@v4
+        with:
+          commit-message: "Update dist files"
+          branch: update-dist-${{ github.run_number }}
+          delete-branch: true
+          title: "Update dist files"
+          body: "This PR updates the dist files."
+          base: ${{ github.event.inputs.branch }}
+      - name: Print message
+        if: steps.git-check.outputs.changed != 'true'
+        run: echo "No changes in dist files. No pull request created."
