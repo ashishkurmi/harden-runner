@@ -7,17 +7,21 @@ on:
         description: "Branch to run build and commit dist"
         required: true
         default: "main"
+  pull_request:
+    types: [closed]
+    branches: [main, int, rc]
 
 jobs:
   build-and-commit:
     runs-on: ubuntu-latest
+    if: github.event.workflow_dispatch || (github.event.pull_request.merged == true)
     permissions:
       contents: write
       pull-requests: write
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.inputs.branch }}
+          ref: ${{ github.event.pull_request.base.ref || github.event.inputs.branch }}
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -41,7 +45,13 @@ jobs:
           delete-branch: true
           title: "Update dist files"
           body: "This PR updates the dist files."
-          base: ${{ github.event.inputs.branch }}
+          base: ${{ github.event.pull_request.base.ref || github.event.inputs.branch }}
+      - name: Assign PR to original author
+        if: steps.git-check.outputs.changed == 'true'
+        uses: peter-evans/assign-pull-request@v1
+        with:
+          assignees: ${{ github.event.pull_request.user.login }}
+        continue-on-error: true
       - name: Print no change message
         if: steps.git-check.outputs.changed != 'true'
         run: echo "No changes in dist files. No pull request created."
